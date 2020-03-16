@@ -1,5 +1,9 @@
+use std::collections::HashMap;
+use std::default::Default;
+
 const NUMBER_OF_SLICES: f64 = 3.0;
 
+#[derive(Debug)]
 enum Number {
     ONE(String),
     TWO(String),
@@ -12,13 +16,14 @@ enum Number {
     NINE(String),
 }
 
+#[derive(Debug, PartialEq, Eq, Hash)]
 enum MoneyUnit {
-    HUNDRED(String),
-    THOUSAND(String),
-    MILLION(String),
-    BILLION(String),
-    TRILLION(String),
-    QUADRILLION(String),
+    HUNDRED,
+    THOUSAND,
+    MILLION,
+    BILLION,
+    TRILLION,
+    QUADRILLION,
 }
 
 #[derive(Debug)]
@@ -80,12 +85,91 @@ impl MoneySpeaker {
     }
 }
 
+#[derive(Debug)]
+struct SpeakInLocalLang {
+    numbers: Vec<Vec<char>>,
+    stringConverter: NumberToStringInLocalLang,
+}
+
+impl SpeakInLocalLang {
+    fn convert_number_to_local_words(&self) -> String {
+        String::from("hello")
+    }
+}
+
+#[derive(Debug)]
+struct NumberToStringInLocalLang {
+    lan: Lan,
+    numbers: HashMap<char, Number>,
+    money_units: HashMap<MoneyUnit, String>,
+}
+
 fn main() {
     let money = MoneySpeaker::new(1450120, Lan::EN);
 
     let a = money.money_format();
 
-    println!("{:?}", money.Speak());
+    let mut numToString = NumberToStringInLocalLang {
+        lan: Lan::EN,
+        numbers: HashMap::new(),
+        money_units: HashMap::new(),
+    };
 
-    println!("{:?}", a);
+    match numToString.lan {
+        Lan::EN => {
+            numToString
+                .numbers
+                .insert('1', Number::ONE(String::from("One")));
+            numToString
+                .numbers
+                .insert('2', Number::TWO(String::from("Two")));
+            numToString
+                .numbers
+                .insert('3', Number::THREE(String::from("Three")));
+            numToString
+                .numbers
+                .insert('4', Number::FOUR(String::from("Four")));
+            numToString
+                .numbers
+                .insert('5', Number::FIVE(String::from("Five")));
+            numToString
+                .numbers
+                .insert('6', Number::SIX(String::from("Six")));
+            numToString
+                .numbers
+                .insert('7', Number::SEVEN(String::from("Seven")));
+            numToString
+                .numbers
+                .insert('8', Number::EIGHT(String::from("Eight")));
+            numToString
+                .numbers
+                .insert('9', Number::NINE(String::from("Nine")));
+            numToString
+                .money_units
+                .insert(MoneyUnit::HUNDRED, String::from("Hundred"));
+            numToString
+                .money_units
+                .insert(MoneyUnit::THOUSAND, String::from("Thousand"));
+            numToString
+                .money_units
+                .insert(MoneyUnit::MILLION, String::from("Million"));
+            numToString
+                .money_units
+                .insert(MoneyUnit::BILLION, String::from("Billion"));
+            numToString
+                .money_units
+                .insert(MoneyUnit::TRILLION, String::from("Trillion"));
+            numToString
+                .money_units
+                .insert(MoneyUnit::QUADRILLION, String::from("Quadrillion"));
+        }
+    }
+
+    let money_speaker = SpeakInLocalLang {
+        numbers: money.money_format(),
+        stringConverter: numToString,
+    };
+
+    println!("{:?}", money_speaker);
+
 }
